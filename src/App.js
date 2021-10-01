@@ -43,6 +43,10 @@ function App() {
 
       setcourseNumber('');
       setCourseName('');
+
+      if (error) {
+        console.log(error);
+      }
     }
   }
 
