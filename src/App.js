@@ -3,7 +3,7 @@ import supabase from './db';
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [courses, setCourses] = useState([]);
+  const [course, setCourses] = useState([]);
   const [courseName, setCourseName] = useState('');
   const [courseNumber, setcourseNumber] = useState('');
 
@@ -48,7 +48,7 @@ function App() {
     <div className='App'>
       <div>
         <h1>Course List</h1>
-        {courses.map((course) => (
+        {course.map((course) => (
           <li key={course.id}>
             {course.course_name}, {course.course_number}
           </li>
