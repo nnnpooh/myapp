@@ -1,61 +1,40 @@
 import "./App.css";
-import TextInput from "./components/TextInput";
 import CourseList from "./components/CourseList";
 import useCourse from "./hooks/useCourse";
+import InputForm from "./components/InputForm";
+import { useState } from "react";
 
 function App() {
-  const {
-    courses,
-    inputData,
-    setInputData,
-    editMode,
-    submitCourseForm,
-    submitEditCourseForm,
-    handleDelete,
-    handleEdit,
-    setCurrentCourse,
-  } = useCourse();
+  const { courses, loadData, deleteData, addData, updateData } = useCourse();
+  const [editMode, setEditMode] = useState(false);
+  const [currentCourse, setCurrentCourse] = useState(null);
 
+  const courseListProps = {
+    courses,
+    setCurrentCourse,
+    deleteData,
+    setEditMode,
+    loadData,
+    editMode,
+  };
+
+  const InputFormProps = {
+    addData,
+    currentCourse,
+    setEditMode,
+    updateData,
+    editMode,
+  };
   return (
     <div className="App">
       <div>
         <h1>Course List</h1>
-        <CourseList
-          course={courses}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
-          setCurrentCourse={setCurrentCourse}
-        />
+        <CourseList {...courseListProps} />
       </div>
 
       <div>
         <h1>Add Course</h1>
-        <form onSubmit={submitCourseForm}>
-          <TextInput
-            inputId="course_name"
-            inputLabel="Course Name"
-            inputValue={inputData.courseName}
-            setInputValue={(value) =>
-              setInputData({ ...inputData, courseName: value })
-            }
-          />
-
-          <TextInput
-            inputId="course_numbers"
-            inputLabel="Course Number"
-            inputValue={inputData.courseNumber}
-            setInputValue={(value) =>
-              setInputData({ ...inputData, courseNumber: value })
-            }
-          />
-
-          {!editMode && <button type="submit">Add Course</button>}
-          {editMode && (
-            <button type="button" onClick={submitEditCourseForm}>
-              Edit Course
-            </button>
-          )}
-        </form>
+        <InputForm {...InputFormProps} />
       </div>
     </div>
   );
