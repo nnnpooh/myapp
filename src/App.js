@@ -8,6 +8,7 @@ function App() {
   const [courseNumber, setcourseNumber] = useState('');
   const [courseId, setCourseId] = useState(0);
   const [editMode, setEditMode] = useState(false);
+  const [courseType, setCourseType] = useState('');
 
   async function loadData() {
     let { data } = await supabase.from('course').select('*');
@@ -26,16 +27,23 @@ function App() {
     setcourseNumber(event.target.value);
   }
 
+  function handleCourseType(event) {
+    setCourseType(event.target.value);
+  }
+
+
+
+
   async function submitCourseForm(event) {
     event.preventDefault();
 
-    if (courseNumber !== '' && courseName !== '') {
+    if (courseNumber !== '' && courseName !== '' && courseType !== '') {
       const dataRow = {
         created_at: new Date(),
         updated_at: new Date(),
         course_number: courseNumber,
         course_name: courseName,
-        type: 'วิชาเลือก',
+        course_type: courseType,
       };
 
       const { data, error } = await supabase.from('course').insert([dataRow]);
@@ -43,6 +51,7 @@ function App() {
 
       setcourseNumber('');
       setCourseName('');
+      setCourseType('');
 
       if (error) {
         console.log(error);
@@ -67,19 +76,21 @@ function App() {
     setCourseName(courseData.course_name);
     setcourseNumber(courseData.course_number);
     setCourseId(courseData.id);
+    setCourseType(courseData.course_type);
   }
 
   async function submitEditCourseForm() {
     console.log(courseId);
     const { data, error } = await supabase
       .from('course')
-      .update({ course_name: courseName, course_number: courseNumber })
+      .update({ course_name: courseName, course_number: courseNumber, course_type: courseType })
       .eq('id', courseId);
 
     await loadData();
 
     setCourseName('');
     setcourseNumber('');
+    setCourseType('');
     setEditMode(false);
   }
 
@@ -89,7 +100,7 @@ function App() {
         <h1>Course List</h1>
         {course.map((course) => (
           <li key={course.id}>
-            {course.course_name}, {course.course_number}{' '}
+            {course.course_name}, {course.course_number}, {course.course_type}{' '}
             <span
               onClick={() => {
                 handleDelete(course.id);
@@ -115,6 +126,7 @@ function App() {
               type='text'
             ></input>
           </div>
+
           <div>
             <label htmlFor='course_number'>Course Number</label>
             <input
@@ -124,6 +136,22 @@ function App() {
               onChange={handleCourseNumber}
             ></input>
           </div>
+
+          <div>
+            <label>
+              Course Type
+              <select htmlFor='course_type'
+                id='course_type'
+                value={courseType}
+                onChange={handleCourseType}>
+                <option disable select value="">     </option>
+                <option value="วิชาหลัก">วิชาหลัก</option>
+                <option value="วิชาเลือก">วิชาเลือก</option>
+              </select>
+            </label>
+          </div>
+
+
           {!editMode && <button type='submit'>Add Course</button>}
         </form>
         {editMode && (
