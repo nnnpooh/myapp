@@ -31,9 +31,6 @@ function App() {
     setCourseType(event.target.value);
   }
 
-
-
-
   async function submitCourseForm(event) {
     event.preventDefault();
 
@@ -68,9 +65,14 @@ function App() {
   }
 
   async function handleEdit(id) {
+    console.log('Editing', id);
     setEditMode(true);
-    let { data: course, error } = await supabase.from('course').select('*');
+    let { data: course, error } = await supabase
+      .from('course')
+      .select('*')
+      .eq('id', id);
 
+    console.log(course);
     const courseData = course[0];
 
     setCourseName(courseData.course_name);
@@ -83,7 +85,11 @@ function App() {
     console.log(courseId);
     const { data, error } = await supabase
       .from('course')
-      .update({ course_name: courseName, course_number: courseNumber, course_type: courseType })
+      .update({
+        course_name: courseName,
+        course_number: courseNumber,
+        course_type: courseType,
+      })
       .eq('id', courseId);
 
     await loadData();
@@ -140,17 +146,20 @@ function App() {
           <div>
             <label>
               Course Type
-              <select htmlFor='course_type'
+              <select
+                htmlFor='course_type'
                 id='course_type'
                 value={courseType}
-                onChange={handleCourseType}>
-                <option disable select value="">     </option>
-                <option value="วิชาหลัก">วิชาหลัก</option>
-                <option value="วิชาเลือก">วิชาเลือก</option>
+                onChange={handleCourseType}
+              >
+                <option disabled value=''>
+                  {' '}
+                </option>
+                <option value='วิชาหลัก'>วิชาหลัก</option>
+                <option value='วิชาเลือก'>วิชาเลือก</option>
               </select>
             </label>
           </div>
-
 
           {!editMode && <button type='submit'>Add Course</button>}
         </form>
